@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>AP Psychology Unit 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky tab bar over four study modes (Learn, Brain map, Flashcards, Quiz).
+   Palette borrows from histology stains: hematoxylin violet and eosin pink on a cool lavender paper. */
+:root{
+  --bg:#F5F4FA; --surface:#FFFFFF; --surface2:#ECE9F7; --ink:#1A1730; --muted:#5B5776; --line:#D8D3EB;
+  --violet:#5B3FA6; --on-violet:#FFFFFF; --pink:#C0316D; --amber:#A25F00; --teal:#0B7A83; --slate:#5A6788;
+  --good:#17714F; --good-bg:#DDF3E9; --bad:#A93028; --bad-bg:#FBE4E1;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121020; --surface:#1B1830; --surface2:#26213F; --ink:#EFEBFC; --muted:#AAA4C9; --line:#37315A;
+    --violet:#A78BFA; --on-violet:#15102B; --pink:#F27AA8; --amber:#EDB25A; --teal:#5BD1DA; --slate:#9DB0DC;
+    --good:#52D1A2; --good-bg:#12332B; --bad:#FF8F86; --bad-bg:#3A1A1A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121020; --surface:#1B1830; --surface2:#26213F; --ink:#EFEBFC; --muted:#AAA4C9; --line:#37315A;
+  --violet:#A78BFA; --on-violet:#15102B; --pink:#F27AA8; --amber:#EDB25A; --teal:#5BD1DA; --slate:#9DB0DC;
+  --good:#52D1A2; --good-bg:#12332B; --bad:#FF8F86; --bad-bg:#3A1A1A; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+button{font-family:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main.wrap{padding-block:22px 48px}
+.eyebrow{font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* header and tabs */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{padding-block:12px 0}
+.brand h1{font-size:clamp(1.25rem,4.6vw,1.75rem);font-weight:800;margin-top:2px}
+.tabs{display:flex;gap:4px;overflow-x:auto;margin-top:10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px 9px;font:700 15px var(--body);color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--violet);border-bottom-color:var(--violet)}
+.view h2{font-size:clamp(1.4rem,5vw,1.9rem);font-weight:800}
+.lede{color:var(--muted);margin:6px 0 18px;max-width:62ch}
+
+/* buttons */
+.btn{min-height:44px;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font:700 15px var(--body);cursor:pointer}
+.btn:hover{border-color:var(--violet)}
+.btn.primary{background:var(--violet);color:var(--on-violet);border-color:var(--violet)}
+.btn.good{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+.btn.small{min-height:36px;padding:6px 12px;font-size:14px}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
+/* learn */
+.topic{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:12px}
+.topic summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:16px 18px}
+.topic summary::-webkit-details-marker{display:none}
+.tname{font:800 1.12rem var(--display)}
+.tcount{font:500 11px var(--mono);letter-spacing:.08em;color:var(--muted);white-space:nowrap}
+.topic[open] summary{border-bottom:1px solid var(--line)}
+.tbody{padding:6px 18px 18px;min-width:0}
+.row{display:grid;grid-template-columns:minmax(0,11rem) minmax(0,1fr);gap:4px 18px;padding:11px 0;border-bottom:1px solid var(--line)}
+.row dt{font-weight:700;color:var(--violet)}
+.row dd{margin:0;min-width:0}
+dl{margin:0}
+.trap{background:var(--surface2);border-radius:10px;padding:12px 14px;margin-top:16px}
+.trap b{display:inline-block;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pink);margin-right:8px}
+.neuron{margin:12px 0 4px;overflow-x:auto}
+.neuron svg{display:block;width:100%;min-width:340px;height:auto}
+.neuron text{font:500 10.5px var(--mono);fill:var(--muted)}
+
+/* brain map */
+.brainwrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+.figure{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px;min-width:0}
+#brainsvg{display:block;width:100%;height:auto;max-height:70vh}
+.g-cortex{--c:var(--violet)} .g-language{--c:var(--pink)} .g-deep{--c:var(--amber)} .g-hind{--c:var(--teal)} .g-conn{--c:var(--slate)}
+.reg{fill:var(--c);fill-opacity:.2;stroke:var(--c);stroke-width:1.5;cursor:pointer}
+.reg:hover{fill-opacity:.38}
+.reg.line{fill:none;stroke-width:8;stroke-opacity:.55;stroke-linecap:round}
+.reg.line:hover{stroke-opacity:.8}
+.reg.sel{fill-opacity:.62;stroke-width:2.6}
+.reg.line.sel{stroke-opacity:1;stroke-width:9}
+.reg.wrong{fill:var(--bad);stroke:var(--bad);fill-opacity:.5}
+.reg.line.wrong{stroke:var(--bad);stroke-opacity:1;fill:none}
+.reg:focus-visible{outline:none;stroke:var(--ink);stroke-width:3}
+.outline{fill:none;stroke:var(--ink);stroke-opacity:.45;stroke-width:1.5;pointer-events:none}
+.lbl{font:500 8.5px var(--mono);letter-spacing:.1em;fill:var(--ink);opacity:.7;pointer-events:none}
+.testing .lbl{display:none}
+.side{min-width:0}
+.modebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-height:150px}
+.panel h3{font-size:1.4rem;font-weight:800;margin:6px 0 10px}
+.pill{display:inline-block;font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--c);border:1px solid var(--c);border-radius:99px;padding:2px 10px}
+.facts dt{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:10px}
+.facts dd{margin:2px 0 0}
+.clue{font-size:1.15rem;font-weight:700;margin:8px 0}
+.msg{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--surface2)}
+.msg.ok{background:var(--good-bg);color:var(--good)}
+.msg.no{background:var(--bad-bg);color:var(--bad)}
+.chips{margin-top:16px;display:grid;gap:12px}
+.cglabel{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--c);display:inline-block}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--c);background:var(--surface);border-radius:99px;padding:5px 12px;min-height:34px;font:700 13.5px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--c);color:var(--on-violet)}
+
+/* flashcards */
+.controls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;margin-bottom:14px}
+.controls label{display:flex;gap:8px;align-items:center;font-size:14.5px}
+select{font:700 15px var(--body);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-height:44px;max-width:100%}
+.card{display:flex;flex-direction:column;justify-content:center;gap:14px;width:100%;min-height:240px;text-align:left;padding:26px 24px;border-radius:14px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.card.back{background:var(--violet);color:var(--on-violet);border-color:var(--violet)}
+.cardtag{font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;opacity:.75}
+.cardtext{font:700 clamp(1.15rem,4.4vw,1.5rem)/1.3 var(--display)}
+.card.back .cardtext{font-family:var(--body);font-weight:400;font-size:clamp(1.05rem,4vw,1.25rem);line-height:1.5}
+.cardhint{font-size:13px;opacity:.7}
+.bar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;height:100%;background:var(--violet);border-radius:99px}
+.small{font-size:14px;color:var(--muted)}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:28px 22px;text-align:left}
+.empty h3{font-size:1.25rem;margin-bottom:6px}
+
+/* quiz */
+.tchips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.tchip{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;min-height:42px;font:700 14.5px var(--body);cursor:pointer;text-align:left}
+.tchip[aria-pressed="true"]{border-color:var(--violet);background:var(--violet);color:var(--on-violet)}
+.tchip small{display:block;font:500 10.5px var(--mono);opacity:.8;letter-spacing:.04em}
+.qtext{font:800 clamp(1.15rem,4.4vw,1.4rem)/1.3 var(--display);margin:14px 0}
+.opts{display:grid;gap:10px}
+.opt{display:flex;flex-direction:column;gap:2px;text-align:left;width:100%;padding:13px 15px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;font:400 16px var(--body)}
+.opt:hover:not(:disabled){border-color:var(--violet)}
+.opt:disabled{cursor:default}
+.opt.correct{background:var(--good-bg);border-color:var(--good)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.opt .mark{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.opt.correct .mark{color:var(--good)}
+.opt.wrong .mark{color:var(--bad)}
+.why{margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--surface2)}
+.score{font:800 clamp(2.4rem,10vw,3.6rem)/1 var(--display);color:var(--violet);margin:6px 0}
+.miss{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px}
+.miss p+p{margin-top:4px}
+.foot{margin-top:36px;color:var(--muted);font-size:13.5px;max-width:62ch}
+
+@media (max-width:760px){
+  .brainwrap{grid-template-columns:minmax(0,1fr)}
+  .row{grid-template-columns:minmax(0,1fr)}
+  .row dt{font-size:15px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <span class="eyebrow">AP Psychology · Unit 2</span>
+      <h1>Biological Bases of Behavior</h1>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Study modes">
+      <button class="tab" role="tab" id="t-learn" data-view="learn" aria-selected="true">Learn</button>
+      <button class="tab" role="tab" id="t-brain" data-view="brain" aria-selected="false">Brain map</button>
+      <button class="tab" role="tab" id="t-cards" data-view="cards" aria-selected="false">Flashcards</button>
+      <button class="tab" role="tab" id="t-quiz" data-view="quiz" aria-selected="false">Quiz</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="view" id="v-learn">
+    <h2>Learn the material</h2>
+    <p class="lede">Read one topic at a time. Each one ends with an exam trap and shortcuts to flashcards and a quiz on just that topic.</p>
+    <div id="topics"></div>
+  </section>
+
+  <section class="view" id="v-brain" hidden>
+    <h2>Brain map</h2>
+    <p class="lede">Tap a region to see what it does and what happens when it is damaged. Switch on Test me to find regions from clues.</p>
+    <div class="brainwrap">
+      <div class="figure" id="figure">
+        <svg id="brainsvg" viewBox="0 0 400 320" role="group" aria-label="Side view of the brain with the front facing left">
+          <defs><clipPath id="bc"><path d="M60 140 C50 70 110 30 200 30 C290 30 360 70 355 130 C352 165 330 185 300 190 L150 195 C100 200 65 180 60 140 Z"/></clipPath></defs>
+          <path class="reg g-hind" data-id="cerebellum" d="M232 196 C236 236 330 250 348 206 C332 190 258 188 232 196 Z"/>
+          <path class="reg g-hind" data-id="pons" d="M208 192 L254 192 Q262 218 256 246 L212 246 Q206 218 208 192 Z"/>
+          <path class="reg g-hind" data-id="medulla" d="M212 246 L256 246 Q254 280 250 304 L222 304 Q214 280 212 246 Z"/>
+          <g clip-path="url(#bc)">
+            <polygon class="reg g-cortex" data-id="frontal" points="0,0 214,0 196,152 120,172 120,300 0,300"/>
+            <polygon class="reg g-cortex" data-id="parietal" points="214,0 292,0 300,128 196,152"/>
+            <polygon class="reg g-cortex" data-id="temporal" points="120,172 196,152 300,128 300,300 120,300"/>
+            <polygon class="reg g-cortex" data-id="occipital" points="292,0 400,0 400,300 300,300 300,128"/>
+            <polygon class="reg g-cortex" data-id="motor" points="190,24 215,24 208,72 184,72"/>
+            <polygon class="reg g-cortex" data-id="somato" points="215,24 240,24 232,72 208,72"/>
+          </g>
+          <path class="outline" d="M60 140 C50 70 110 30 200 30 C290 30 360 70 355 130 C352 165 330 185 300 190 L150 195 C100 200 65 180 60 140 Z"/>
+          <ellipse class="reg g-language" data-id="broca" cx="140" cy="138" rx="15" ry="11"/>
+          <ellipse class="reg g-language" data-id="wernicke" cx="262" cy="138" rx="15" ry="10"/>
+          <path class="reg line g-conn" data-id="callosum" d="M150 98 Q205 80 262 98"/>
+          <ellipse class="reg g-deep" data-id="thalamus" cx="205" cy="122" rx="22" ry="13"/>
+          <ellipse class="reg g-deep" data-id="hypothalamus" cx="196" cy="150" rx="11" ry="7"/>
+          <circle class="reg g-deep" data-id="amygdala" cx="162" cy="166" r="8"/>
+          <path class="reg line g-deep" data-id="hippocampus" d="M205 172 Q235 160 262 176"/>
+          <path class="reg line g-hind" data-id="reticular" d="M234 200 L236 296"/>
+          <text class="lbl" x="112" y="96" text-anchor="middle">FRONTAL</text>
+          <text class="lbl" x="268" y="62" text-anchor="middle">PARIETAL</text>
+          <text class="lbl" x="327" y="112" text-anchor="middle">OCCIPITAL</text>
+          <text class="lbl" x="288" y="180" text-anchor="middle">TEMPORAL</text>
+          <text class="lbl" x="300" y="226" text-anchor="middle">CEREBELLUM</text>
+          <text class="lbl" x="202" y="222" text-anchor="end">PONS</text>
+          <text class="lbl" x="208" y="282" text-anchor="end">MEDULLA</text>
+          <text class="lbl" x="60" y="40">FRONT</text>
+        </svg>
+      </div>
+      <div class="side">
+        <div class="modebar">
+          <button class="btn primary" id="testbtn" aria-pressed="false">Test me</button>
+          <span class="small" id="modehint">Exploring</span>
+        </div>
+        <div class="panel" id="panel" aria-live="polite"></div>
+        <div class="chips" id="chips"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-cards" hidden>
+    <h2>Flashcards</h2>
+    <p class="lede">Tap the card to see the answer. Cards you mark as known drop out of the round, and your progress is saved on this device.</p>
+    <div class="controls">
+      <label>Topic <select id="fc-topic"></select></label>
+      <label><input type="checkbox" id="fc-hide" checked> Hide cards I know</label>
+      <label><input type="checkbox" id="fc-shuffle" checked> Shuffle</label>
+    </div>
+    <div id="fc-root"></div>
+  </section>
+
+  <section class="view" id="v-quiz" hidden>
+    <h2>Practice quiz</h2>
+    <div id="quiz-root"></div>
+  </section>
+
+  <p class="foot">Content follows the AP Psychology Unit 2 outline. Your teacher may stress different details, so check the class syllabus too.</p>
+</main>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t}return a};
+
+/* ---------- content: topics and notes ---------- */
+const NEURON_SVG=`<div class="neuron"><svg viewBox="0 0 420 150" role="img" aria-label="Diagram of a neuron: dendrites, soma, axon with myelin sheath, and terminal buttons">
+<g stroke="var(--violet)" stroke-width="3" stroke-linecap="round" fill="none">
+<path d="M58 66 L24 38"/><path d="M56 76 L16 76"/><path d="M58 86 L24 114"/><path d="M66 58 L48 26"/>
+<path d="M104 75 L330 75" stroke-width="4"/>
+<path d="M330 75 L372 42"/><path d="M330 75 L380 75"/><path d="M330 75 L372 108"/></g>
+<g fill="var(--pink)" fill-opacity=".35" stroke="var(--pink)" stroke-width="1.5">
+<rect x="124" y="64" width="40" height="22" rx="10"/><rect x="172" y="64" width="40" height="22" rx="10"/><rect x="220" y="64" width="40" height="22" rx="10"/><rect x="268" y="64" width="40" height="22" rx="10"/></g>
+<circle cx="80" cy="75" r="24" fill="var(--violet)" fill-opacity=".25" stroke="var(--violet)" stroke-width="2"/>
+<circle cx="80" cy="75" r="8" fill="var(--violet)"/>
+<g fill="var(--violet)"><circle cx="372" cy="42" r="5"/><circle cx="380" cy="75" r="5"/><circle cx="372" cy="108" r="5"/></g>
+<text x="8" y="14">Dendrites</text><text x="80" y="122" text-anchor="middle">Soma</text>
+<text x="216" y="50" text-anchor="middle">Axon</text><text x="216" y="106" text-anchor="middle">Myelin sheath</text>
+<text x="358" y="136" text-anchor="middle">Terminal buttons</text><text x="150" y="140" text-anchor="middle">signal travels right</text>
+</svg></div>`;
+
+const NOTES=[
+{id:`neu`,name:`Neurons`,full:`Neurons and neural firing`,extra:NEURON_SVG,
+ items:[
+ [`Neuron`,`Nerve cell that receives, processes, and sends messages.`],
+ [`Dendrites`,`Branching fibers that receive messages from other neurons.`],
+ [`Soma`,`The cell body. Contains the nucleus and decides whether the neuron fires.`],
+ [`Axon`,`Long fiber that carries the signal away from the soma.`],
+ [`Myelin sheath`,`Fatty insulation around the axon that speeds up the signal. Loss of myelin is seen in multiple sclerosis.`],
+ [`Terminal buttons`,`Axon endings that release neurotransmitters.`],
+ [`Glial cells`,`Support cells that nourish, insulate, and clean up around neurons. They also form myelin.`],
+ [`Resting potential`,`The stable, unstimulated state. The inside of the cell is about -70 mV compared with the outside (polarized).`],
+ [`Threshold`,`The minimum stimulation needed to trigger an action potential.`],
+ [`Action potential`,`A brief electrical impulse down the axon. Sodium (Na+) channels open and Na+ rushes in (depolarization). Then potassium (K+) flows out to reset the cell (repolarization).`],
+ [`Refractory period`,`A short rest after firing. The neuron cannot fire again until it resets.`],
+ [`Synapse`,`The tiny gap between a sending neuron and a receiving neuron. Neurotransmitters cross it and bind to receptor sites.`],
+ [`Excitatory and inhibitory`,`Excitatory messages make the next neuron more likely to fire. Inhibitory messages make it less likely to fire.`],
+ [`Reuptake`,`The sending neuron reabsorbs leftover neurotransmitter from the synapse.`]],
+ trap:`All-or-none principle. A stronger stimulus does not make a bigger action potential. It makes neurons fire more often, or more neurons fire.`},
+{id:`chem`,name:`Neurotransmitters`,full:`Neurotransmitters and drugs`,
+ items:[
+ [`Acetylcholine (ACh)`,`Muscle movement, learning, and memory. Low levels are linked to Alzheimer's disease.`],
+ [`Dopamine`,`Movement, reward, and motivation. Too little is linked to Parkinson's disease. Too much is linked to symptoms of schizophrenia.`],
+ [`Serotonin`,`Mood, hunger, sleep, and arousal. Low levels are linked to depression.`],
+ [`Norepinephrine`,`Alertness and arousal. Also acts as a hormone during stress.`],
+ [`GABA`,`The main inhibitory neurotransmitter. Low levels are linked to seizures, anxiety, and insomnia.`],
+ [`Glutamate`,`The main excitatory neurotransmitter. Involved in learning and memory. Too much can overexcite neurons.`],
+ [`Endorphins`,`Natural painkillers that also produce pleasure. Released during exercise and pain.`],
+ [`Substance P`,`Carries pain messages.`],
+ [`Agonist`,`A drug that mimics a neurotransmitter or boosts its effect. Example: morphine and heroin imitate endorphins.`],
+ [`Antagonist`,`A drug that blocks a neurotransmitter's effect. Example: curare blocks ACh receptors and causes paralysis.`]],
+ trap:`Agonist activates. Antagonist blocks (think "against"). Questions often describe a drug and ask which one it is.`},
+{id:`nerv`,name:`Nervous System`,full:`The nervous system`,
+ items:[
+ [`Central nervous system (CNS)`,`The brain and spinal cord. Makes decisions and coordinates messages.`],
+ [`Peripheral nervous system (PNS)`,`All nerves outside the brain and spinal cord. Links the CNS to the rest of the body.`],
+ [`Somatic nervous system`,`Carries sensory information in and controls voluntary movement of skeletal muscles.`],
+ [`Autonomic nervous system`,`Controls involuntary functions such as heartbeat, digestion, and glands.`],
+ [`Sympathetic division`,`Arouses the body to spend energy (fight or flight). Heart rate rises, pupils dilate, digestion slows.`],
+ [`Parasympathetic division`,`Calms the body and conserves energy (rest and digest). Heart rate slows, digestion resumes.`],
+ [`Sensory neurons`,`Carry messages from sense organs to the CNS (afferent).`],
+ [`Motor neurons`,`Carry commands from the CNS to muscles and glands (efferent).`],
+ [`Interneurons`,`Connect neurons inside the CNS. Most neurons in the brain are interneurons.`],
+ [`Spinal reflex`,`An automatic response handled by the spinal cord, such as pulling your hand off a hot stove. A sensory neuron, an interneuron, and a motor neuron are involved, so it is quick.`]],
+ trap:`Afferent means arriving at the CNS. Efferent means exiting the CNS. Sensory is afferent, motor is efferent.`},
+{id:`brain`,name:`Brain`,full:`Brain structures and the cortex`,
+ items:[
+ [`Brainstem`,`The oldest part of the brain. Includes the medulla and pons and handles automatic survival functions.`],
+ [`Cerebral cortex`,`The thin outer layer of the cerebrum, where higher-level thinking happens.`],
+ [`Frontal lobe`,`Planning, judgment, personality, and voluntary movement.`],
+ [`Parietal lobe`,`Touch and body position, plus spatial awareness.`],
+ [`Temporal lobe`,`Hearing, language comprehension, and memory.`],
+ [`Occipital lobe`,`Vision.`],
+ [`Lateralization`,`Each hemisphere has specialties. The left hemisphere is usually dominant for language. The right handles many spatial and nonverbal tasks.`],
+ [`Corpus callosum`,`A band of axons connecting the two hemispheres. Cutting it creates a split brain (Sperry and Gazzaniga).`],
+ [`Plasticity`,`The brain's ability to change with experience and to reorganize after injury. Younger brains are generally more plastic.`],
+ [`Neurogenesis`,`Formation of new neurons. Occurs in a few areas, such as the hippocampus.`]],
+ trap:`"Left-brained" and "right-brained" personality types are a myth. Both hemispheres work together on almost every task.`},
+{id:`meth`,name:`Imaging`,full:`Studying the brain`,
+ items:[
+ [`Lesion`,`Destroying or removing a small area to see how behavior changes.`],
+ [`EEG`,`Electrodes on the scalp record electrical activity (brain waves). Used in sleep research and to detect seizures.`],
+ [`CT scan`,`X-rays combined into slices of the brain. Shows structure, not activity.`],
+ [`MRI`,`Magnetic fields and radio waves make detailed images of brain structure.`],
+ [`PET scan`,`Tracks a radioactive form of glucose to show which areas are active.`],
+ [`fMRI`,`Tracks blood flow and oxygen use to show activity while a person does a task, along with structure.`]],
+ trap:`Structure versus function. CT and MRI show what the brain looks like. EEG, PET, and fMRI show what it is doing.`},
+{id:`endo`,name:`Endocrine`,full:`The endocrine system`,
+ items:[
+ [`Endocrine system`,`Glands that release hormones into the bloodstream.`],
+ [`Hormones`,`Chemical messengers carried in the blood. Slower than neural messages, but the effects last longer.`],
+ [`Pituitary gland`,`The "master gland." Controlled by the hypothalamus. Releases growth hormone and signals other glands.`],
+ [`Thyroid`,`Regulates metabolism.`],
+ [`Adrenal glands`,`Release epinephrine (adrenaline), norepinephrine, and cortisol during stress.`],
+ [`Pancreas`,`Regulates blood sugar with insulin and glucagon.`],
+ [`Gonads`,`Ovaries (estrogen) and testes (testosterone). Influence sexual development and behavior.`],
+ [`Pineal gland`,`Releases melatonin, which helps regulate sleep.`],
+ [`Oxytocin`,`A hormone involved in bonding, childbirth, and milk release.`],
+ [`Leptin and ghrelin`,`Leptin signals fullness. Ghrelin signals hunger.`]],
+ trap:`Nerves are fast and short-lived. Hormones are slower and longer-lasting. In a stress response the two systems work together.`},
+{id:`sleep`,name:`Sleep`,full:`Sleep and dreams`,
+ items:[
+ [`Circadian rhythm`,`A biological clock of about 24 hours. The suprachiasmatic nucleus (in the hypothalamus) responds to light and tells the pineal gland to adjust melatonin.`],
+ [`Awake`,`Beta waves when alert. Alpha waves when relaxed with eyes closed.`],
+ [`N1`,`Lightest sleep. Theta waves. Floating or falling sensations (hypnagogic) and sudden jerks.`],
+ [`N2`,`Sleep spindles (bursts of activity) and K-complexes. About half the night is spent here.`],
+ [`N3`,`Deep sleep. Large, slow delta waves. Hardest to wake from. Growth hormone is released. Sleepwalking and night terrors happen here.`],
+ [`REM sleep`,`Rapid eye movements, vivid dreams, brain activity similar to waking, and muscle paralysis. Sometimes called paradoxical sleep.`],
+ [`Sleep cycle`,`About 90 minutes per cycle. Early cycles have more N3. Later cycles have more REM.`],
+ [`REM rebound`,`After REM deprivation, the person gets extra REM the next time they sleep.`],
+ [`Why we sleep`,`Restoration and repair, memory consolidation, growth, and protection from nighttime danger (evolutionary view).`],
+ [`Insomnia`,`Trouble falling or staying asleep.`],
+ [`Narcolepsy`,`Sudden, uncontrollable sleep attacks, often going straight into REM.`],
+ [`Sleep apnea`,`Breathing repeatedly stops during sleep, causing brief awakenings.`],
+ [`REM behavior disorder`,`The muscle paralysis of REM fails, so people act out their dreams.`],
+ [`Freud: wish fulfillment`,`Dreams express unconscious wishes. Manifest content is the story you remember. Latent content is the hidden meaning.`],
+ [`Activation-synthesis`,`Brainstem activity during REM produces random signals. The cortex builds a story from them.`],
+ [`Information processing`,`Dreams help sort and consolidate the day's memories.`]],
+ trap:`Nightmares happen in REM. Night terrors and sleepwalking happen in N3. Do not mix them up.`},
+{id:`gen`,name:`Genetics`,full:`Genetics and evolution`,
+ items:[
+ [`Chromosomes`,`Threadlike structures of DNA. Humans have 23 pairs, 46 in total.`],
+ [`Genes`,`Segments of DNA that code for proteins and traits.`],
+ [`Genotype and phenotype`,`Genotype is the genetic makeup. Phenotype is the observable result of genes plus environment.`],
+ [`Dominant and recessive`,`A dominant gene shows up when present. A recessive gene shows only when both copies are recessive.`],
+ [`Twin studies`,`Identical (monozygotic) twins share about 100% of their genes. Fraternal (dizygotic) twins share about 50%. If identical twins are more alike than fraternal twins on a trait, genes likely matter.`],
+ [`Adoption studies`,`Compare adopted children with their birth and adoptive families to separate genetic and environmental influence.`],
+ [`Heritability`,`An estimate of how much of the variation in a trait within a group is due to genetic differences. It does not describe any one person.`],
+ [`Epigenetics`,`Environmental factors turn genes on or off without changing the DNA itself.`],
+ [`Nature and nurture`,`Almost every trait comes from both, interacting.`],
+ [`Natural selection`,`Traits that help survival and reproduction become more common over generations. Evolutionary psychology uses this idea to explain behavior.`]],
+ trap:`A heritability of 50% does not mean half of one person's trait comes from genes. It describes variation in a group.`}
+];
+
+/* ---------- content: flashcards [topic, front, back] ---------- */
+const CARDS=[
+[`neu`,`Which part of a neuron receives messages from other neurons?`,`Dendrites.`],
+[`neu`,`What does the myelin sheath do?`,`It insulates the axon and speeds up the signal.`],
+[`neu`,`What is the resting potential?`,`The neuron's stable, unstimulated state: about -70 mV inside compared with outside (polarized).`],
+[`neu`,`What happens during an action potential?`,`Na+ channels open and Na+ rushes in (depolarization). Then K+ flows out to reset the cell (repolarization).`],
+[`neu`,`What is the all-or-none principle?`,`A neuron either fires completely or not at all. A stronger stimulus makes neurons fire more often, not harder.`],
+[`neu`,`What is the refractory period?`,`A brief rest after firing, when the neuron cannot fire again until it resets.`],
+[`neu`,`What is a synapse?`,`The tiny gap between a sending neuron and a receiving neuron. Neurotransmitters cross it and bind to receptor sites.`],
+[`neu`,`What is reuptake?`,`The sending neuron reabsorbs leftover neurotransmitter from the synapse.`],
+[`neu`,`What do glial cells do?`,`They support neurons: nourish, insulate (form myelin), and clean up waste.`],
+[`chem`,`Acetylcholine (ACh): job and link to disease?`,`Muscle movement, learning, and memory. Low levels are linked to Alzheimer's disease.`],
+[`chem`,`Dopamine: job and links to disease?`,`Movement, reward, and motivation. Too little is linked to Parkinson's disease. Too much is linked to schizophrenia symptoms.`],
+[`chem`,`Serotonin: job and link to disease?`,`Mood, hunger, sleep, and arousal. Low levels are linked to depression.`],
+[`chem`,`Norepinephrine: job?`,`Alertness and arousal.`],
+[`chem`,`GABA: job?`,`The main inhibitory neurotransmitter. Low levels are linked to seizures, anxiety, and insomnia.`],
+[`chem`,`Glutamate: job?`,`The main excitatory neurotransmitter. Involved in learning and memory.`],
+[`chem`,`Endorphins: job?`,`Natural painkillers that also produce pleasure, such as the "runner's high."`],
+[`chem`,`Agonist versus antagonist?`,`An agonist mimics or boosts a neurotransmitter. An antagonist blocks it.`],
+[`nerv`,`CNS versus PNS?`,`CNS: brain and spinal cord. PNS: all the nerves outside them.`],
+[`nerv`,`Somatic versus autonomic?`,`Somatic: voluntary movement of skeletal muscles. Autonomic: involuntary functions like heartbeat and digestion.`],
+[`nerv`,`What does the sympathetic division do?`,`Arouses the body to spend energy (fight or flight): heart rate up, pupils dilate, digestion slows.`],
+[`nerv`,`What does the parasympathetic division do?`,`Calms the body and conserves energy (rest and digest): heart rate slows, digestion resumes.`],
+[`nerv`,`Sensory neurons, motor neurons, interneurons?`,`Sensory: sense organs to CNS (afferent). Motor: CNS to muscles and glands (efferent). Interneurons: connect neurons within the CNS.`],
+[`nerv`,`How does a spinal reflex work?`,`A sensory neuron signals an interneuron in the spinal cord, which signals a motor neuron. The response happens before the brain gets the message.`],
+[`brain`,`What is plasticity?`,`The brain's ability to change with experience and reorganize after injury.`],
+[`brain`,`What does the corpus callosum do?`,`Connects the left and right hemispheres so they can communicate.`],
+[`brain`,`What did Sperry and Gazzaniga study?`,`Split-brain patients, whose corpus callosum was cut to treat severe epilepsy. Each hemisphere could act without the other knowing.`],
+[`brain`,`Broca's area versus Wernicke's area?`,`Broca's (left frontal): producing speech. Wernicke's (left temporal): understanding language.`],
+[`brain`,`What did Phineas Gage show?`,`An iron rod through his frontal lobe changed his personality. The frontal lobe is involved in judgment and personality.`],
+[`brain`,`Hippocampus: job?`,`Forms new explicit memories. Damage causes trouble forming new long-term memories (anterograde amnesia).`],
+[`brain`,`Amygdala: job?`,`Processes emotion, especially fear and aggression.`],
+[`brain`,`Cerebellum: job?`,`Coordinates voluntary movement and balance.`],
+[`brain`,`Medulla: job?`,`Controls automatic survival functions such as heartbeat and breathing.`],
+[`brain`,`Thalamus: job?`,`The sensory relay station. Sends sensory information (except smell) to the cortex.`],
+[`brain`,`Hypothalamus: job?`,`Maintains homeostasis: hunger, thirst, body temperature, sex drive. Controls the pituitary gland.`],
+[`brain`,`Reticular formation: job?`,`A network in the brainstem that controls arousal and alertness.`],
+[`meth`,`What does an EEG measure?`,`Electrical activity of the brain through electrodes on the scalp.`],
+[`meth`,`Which scan tracks radioactive glucose?`,`PET scan. It shows which areas are active.`],
+[`meth`,`MRI versus fMRI?`,`MRI shows detailed brain structure. fMRI also tracks blood flow to show activity during a task.`],
+[`meth`,`What is a lesion study?`,`Destroying or removing a small area of brain tissue to see how behavior changes.`],
+[`endo`,`How do hormones compare with neural messages?`,`Slower, but their effects last longer.`],
+[`endo`,`Why is the pituitary called the master gland?`,`It releases hormones that signal other glands. It is controlled by the hypothalamus.`],
+[`endo`,`What do the adrenal glands release?`,`Epinephrine, norepinephrine, and cortisol, especially during stress.`],
+[`endo`,`Which gland regulates blood sugar?`,`The pancreas, using insulin and glucagon.`],
+[`endo`,`Which gland releases melatonin?`,`The pineal gland, to help regulate sleep.`],
+[`endo`,`Leptin versus ghrelin?`,`Leptin signals fullness. Ghrelin signals hunger.`],
+[`sleep`,`What is a circadian rhythm?`,`A biological clock of about 24 hours, set by light through the suprachiasmatic nucleus.`],
+[`sleep`,`What happens in N1?`,`Lightest sleep. Theta waves, hypnagogic sensations, and sudden jerks.`],
+[`sleep`,`What happens in N2?`,`Sleep spindles and K-complexes. About half the night is spent here.`],
+[`sleep`,`What happens in N3?`,`Deep sleep with slow delta waves. Growth hormone is released. Sleepwalking and night terrors happen here.`],
+[`sleep`,`What happens in REM sleep?`,`Rapid eye movements, vivid dreams, an active brain, and paralyzed muscles.`],
+[`sleep`,`What is REM rebound?`,`Extra REM sleep after a period of REM deprivation.`],
+[`sleep`,`What is narcolepsy?`,`Sudden, uncontrollable sleep attacks, often going straight into REM.`],
+[`sleep`,`What is the activation-synthesis theory?`,`Random brainstem activity during REM is turned into a story by the cortex.`],
+[`sleep`,`Manifest versus latent content (Freud)?`,`Manifest: the dream you remember. Latent: its hidden, symbolic meaning.`],
+[`gen`,`Genotype versus phenotype?`,`Genotype: genetic makeup. Phenotype: observable traits, from genes plus environment.`],
+[`gen`,`How do twin studies work?`,`Compare identical twins (about 100% shared genes) with fraternal twins (about 50%). Greater similarity in identical twins suggests genetic influence.`],
+[`gen`,`What is heritability?`,`How much of the variation in a trait within a group is due to genetic differences. It says nothing about one individual.`],
+[`gen`,`What is epigenetics?`,`The environment switches genes on or off without changing the DNA.`],
+[`gen`,`What is natural selection?`,`Traits that help survival and reproduction become more common over generations.`],
+[`gen`,`How many chromosomes do humans have?`,`46, arranged in 23 pairs.`]
+];
+
+/* ---------- content: quiz [topic, question, right, [wrong x3], explanation] ---------- */
+const Q=[
+[`neu`,`Which part of a neuron carries the signal away from the cell body?`,`Axon`,[`Dendrite`,`Soma`,`Glial cell`],`Dendrites receive messages. The axon carries them away from the soma toward other neurons.`],
+[`neu`,`An action potential begins when what happens?`,`Sodium rushes into the neuron`,[`Potassium rushes into the neuron`,`Neurotransmitters are reabsorbed`,`The neuron returns to resting potential`],`Sodium (Na+) channels open and Na+ flows in, which depolarizes the neuron.`],
+[`neu`,`A student claims a stronger stimulus produces a larger action potential. Which principle shows this is wrong?`,`All-or-none principle`,[`Reuptake`,`Plasticity`,`Refractory period`],`A neuron fires completely or not at all. A stronger stimulus makes neurons fire more often, or more neurons fire.`],
+[`neu`,`After firing, a neuron cannot fire again for a brief time. What is this called?`,`Refractory period`,[`Threshold`,`Reuptake`,`Resting potential`],`During the refractory period the neuron resets before it can fire again.`],
+[`neu`,`Neurotransmitters cross the synapse and attach to what on the next neuron?`,`Receptor sites`,[`Myelin`,`Terminal buttons`,`Glial cells`],`Receptor sites on the receiving neuron fit specific neurotransmitters.`],
+[`chem`,`Tremors and difficulty starting movement in Parkinson's disease are linked to low levels of which neurotransmitter?`,`Dopamine`,[`Serotonin`,`GABA`,`Glutamate`],`Parkinson's involves loss of dopamine-producing neurons that control movement.`],
+[`chem`,`Memory problems in Alzheimer's disease are linked to a deficit of which neurotransmitter?`,`Acetylcholine`,[`Norepinephrine`,`Endorphins`,`Dopamine`],`Acetylcholine is involved in learning, memory, and muscle action.`],
+[`chem`,`A drug attaches to dopamine receptors and blocks dopamine from binding. The drug is a(n)...`,`Antagonist`,[`Agonist`,`Endorphin`,`Hormone`],`Antagonists block neurotransmitters. Agonists mimic or boost them.`],
+[`chem`,`Which is the main inhibitory neurotransmitter?`,`GABA`,[`Glutamate`,`Acetylcholine`,`Dopamine`],`GABA calms neural activity. Glutamate is the main excitatory one.`],
+[`chem`,`Morphine reduces pain because it acts as an agonist for which chemicals?`,`Endorphins`,[`Substance P`,`Serotonin`,`GABA`],`Morphine mimics endorphins, the body's natural painkillers.`],
+[`nerv`,`Which division controls involuntary activities like heartbeat and digestion?`,`Autonomic nervous system`,[`Somatic nervous system`,`Central nervous system`,`Sensory neurons`],`The autonomic system handles involuntary functions. The somatic system handles voluntary skeletal muscle movement.`],
+[`nerv`,`A loud noise startles you. Your heart pounds and your pupils widen. Which system caused this?`,`Sympathetic division`,[`Parasympathetic division`,`Somatic nervous system`,`Central nervous system`],`The sympathetic division arouses the body for fight or flight.`],
+[`nerv`,`After an exam, your heart rate slows and digestion resumes. Which system is responsible?`,`Parasympathetic division`,[`Sympathetic division`,`Motor neurons`,`Endocrine system`],`The parasympathetic division calms the body and conserves energy.`],
+[`nerv`,`In a spinal reflex, which type of neuron connects the sensory neuron to the motor neuron?`,`Interneuron`,[`Glial cell`,`Afferent neuron`,`Efferent neuron`],`Interneurons link neurons inside the CNS. Sensory neurons are afferent and motor neurons are efferent.`],
+[`brain`,`After a stroke, a woman understands speech but speaks slowly and with great effort. Which area is most likely damaged?`,`Broca's area`,[`Wernicke's area`,`Occipital lobe`,`Cerebellum`],`Broca's area (left frontal lobe) produces speech. Damage causes halting speech with intact comprehension.`],
+[`brain`,`A patient speaks fluently, but the words make no sense and he cannot understand others. Which area is damaged?`,`Wernicke's area`,[`Broca's area`,`Motor cortex`,`Thalamus`],`Wernicke's area (left temporal lobe) handles language comprehension.`],
+[`brain`,`After surgery, a patient remembers old events but cannot form new memories. Which structure was damaged?`,`Hippocampus`,[`Amygdala`,`Cerebellum`,`Medulla`],`The hippocampus is needed to form new explicit memories.`],
+[`brain`,`A person's eyes work normally, but a stroke leaves them unable to see. Which lobe was most likely damaged?`,`Occipital lobe`,[`Temporal lobe`,`Parietal lobe`,`Frontal lobe`],`The visual cortex is in the occipital lobe at the back of the brain.`],
+[`brain`,`Alcohol makes it hard to walk in a straight line. Which structure does it impair?`,`Cerebellum`,[`Thalamus`,`Hippocampus`,`Corpus callosum`],`The cerebellum coordinates voluntary movement and balance.`],
+[`brain`,`Which structure relays sensory information (except smell) to the cortex?`,`Thalamus`,[`Hypothalamus`,`Amygdala`,`Pons`],`The thalamus is the brain's sensory switchboard.`],
+[`brain`,`Which structure regulates hunger, thirst, and body temperature and controls the pituitary?`,`Hypothalamus`,[`Thalamus`,`Cerebellum`,`Hippocampus`],`The hypothalamus maintains homeostasis and links the nervous and endocrine systems.`],
+[`brain`,`To treat severe epilepsy, surgeons cut which structure, creating a split brain?`,`Corpus callosum`,[`Brainstem`,`Reticular formation`,`Thalamus`],`The corpus callosum connects the hemispheres. Cutting it stops them from sharing information directly.`],
+[`brain`,`After losing a finger, the brain area that handled it begins to respond to neighboring fingers. This shows...`,`Plasticity`,[`Lateralization`,`Reuptake`,`The all-or-none principle`],`Plasticity is the brain's ability to reorganize after change or injury.`],
+[`brain`,`Phineas Gage's personality changed after an iron rod damaged which part of his brain?`,`Frontal lobe`,[`Occipital lobe`,`Cerebellum`,`Medulla`],`The frontal lobe is involved in judgment, planning, and personality.`],
+[`brain`,`Which structure controls heartbeat and breathing?`,`Medulla`,[`Cerebellum`,`Thalamus`,`Amygdala`],`The medulla, at the base of the brainstem, controls automatic survival functions.`],
+[`meth`,`Which technique tracks a radioactive form of glucose to show active brain areas?`,`PET scan`,[`CT scan`,`EEG`,`Lesion study`],`A PET scan shows where glucose is being used, which means those areas are active.`],
+[`meth`,`Which technique shows activity through changes in blood flow while also showing structure?`,`fMRI`,[`EEG`,`CT scan`,`PET scan`],`fMRI tracks blood oxygen changes during tasks.`],
+[`meth`,`A researcher records electrical activity from the scalp while participants sleep. Which technique is this?`,`EEG`,[`MRI`,`PET scan`,`CT scan`],`EEG uses scalp electrodes to record brain waves.`],
+[`endo`,`Compared with neural messages, hormonal messages are generally...`,`Slower but longer-lasting`,[`Faster and shorter-lasting`,`Faster and longer-lasting`,`Slower and shorter-lasting`],`Hormones travel through the bloodstream, so they are slower, but their effects last longer.`],
+[`endo`,`Which glands release epinephrine and cortisol during stress?`,`Adrenal glands`,[`Thyroid`,`Pineal gland`,`Pancreas`],`The adrenal glands release stress hormones after the sympathetic nervous system signals them.`],
+[`endo`,`Which gland releases melatonin?`,`Pineal gland`,[`Pituitary gland`,`Thyroid`,`Adrenal glands`],`The pineal gland releases melatonin, which helps regulate sleep.`],
+[`sleep`,`Sleep spindles and K-complexes are most typical of which stage?`,`N2`,[`N1`,`N3`,`REM`],`N2 features sleep spindles and K-complexes.`],
+[`sleep`,`Large, slow delta waves and the release of growth hormone occur in which stage?`,`N3`,[`N1`,`N2`,`REM`],`N3 is deep, slow-wave sleep.`],
+[`sleep`,`A person has vivid dreams, rapid eye movements, and paralyzed muscles. Which stage is this?`,`REM sleep`,[`N1`,`N2`,`N3`],`REM sleep has an active brain, vivid dreams, and muscle paralysis.`],
+[`sleep`,`Which disorder involves sudden, uncontrollable sleep attacks during the day?`,`Narcolepsy`,[`Insomnia`,`Sleep apnea`,`Night terrors`],`Narcolepsy often involves going straight into REM sleep.`],
+[`sleep`,`Which theory says dreams are the cortex's attempt to make sense of random brainstem activity?`,`Activation-synthesis`,[`Wish fulfillment`,`Information processing`,`Drive reduction`],`Activation-synthesis (Hobson and McCarley) says the cortex builds a story from random signals.`],
+[`sleep`,`Which disorder involves repeated pauses in breathing during sleep?`,`Sleep apnea`,[`Narcolepsy`,`Insomnia`,`REM rebound`],`Breathing stops repeatedly in sleep apnea, causing brief awakenings.`],
+[`gen`,`Identical twins raised apart are more alike on a trait than fraternal twins raised apart. This suggests...`,`Genetic influence on the trait`,[`No environmental influence`,`High plasticity`,`Epigenetic damage`],`Identical twins share about 100% of their genes, fraternal twins about 50%.`],
+[`gen`,`Which term describes the environment turning genes on or off without changing the DNA?`,`Epigenetics`,[`Natural selection`,`Heritability`,`Genotype`],`Epigenetic changes affect gene expression, not the DNA sequence.`],
+[`gen`,`A trait has a heritability of .50. What does this mean?`,`About half the variation in the group is due to genetic differences`,[`Half of each person's trait comes from genes`,`The trait is half learned and half instinct`,`Half of the group has the gene`],`Heritability describes variation within a group, not any single person.`],
+[`gen`,`The observable characteristics that result from genes plus environment are the...`,`Phenotype`,[`Genotype`,`Chromosome`,`Epigenome`],`Genotype is the genetic makeup. Phenotype is what shows.`]
+];
+
+/* ---------- content: brain regions ---------- */
+const GROUPS=[
+ {id:`cortex`,name:`Cerebral cortex`,cls:`g-cortex`},
+ {id:`language`,name:`Language areas`,cls:`g-language`},
+ {id:`deep`,name:`Limbic and deep structures`,cls:`g-deep`},
+ {id:`hind`,name:`Hindbrain and brainstem`,cls:`g-hind`},
+ {id:`conn`,name:`Connections`,cls:`g-conn`}
+];
+const REG=[
+{id:`frontal`,name:`Frontal lobe`,group:`cortex`,clue:`Planning, judgment, and personality. Phineas Gage was injured here.`,job:`Planning, decision making, judgment, personality, and voluntary movement.`,damage:`Changes in personality and poor impulse control. Phineas Gage survived an iron rod through his frontal lobe and became irritable and impulsive.`,hook:`Front of the brain, front of the line for decisions.`},
+{id:`parietal`,name:`Parietal lobe`,group:`cortex`,clue:`Spatial awareness and body position. Contains the somatosensory cortex.`,job:`Receives touch and body position information. Helps with spatial awareness and navigation.`,damage:`Trouble with spatial tasks. Some patients neglect one side of their body or space.`,hook:`P for pressure and position.`},
+{id:`temporal`,name:`Temporal lobe`,group:`cortex`,clue:`Sits above the ears. Hearing and language comprehension.`,job:`Hearing (auditory cortex), language comprehension, and memory.`,damage:`Trouble understanding sounds and speech, and memory problems.`,hook:`Temporal is near your temples, next to your ears.`},
+{id:`occipital`,name:`Occipital lobe`,group:`cortex`,clue:`At the very back of the brain. Handles vision.`,job:`Vision. The visual cortex processes information from the eyes.`,damage:`Blindness even though the eyes work (cortical blindness).`,hook:`It sits far from the eyes yet does the seeing.`},
+{id:`motor`,name:`Motor cortex`,group:`cortex`,clue:`A strip at the rear of the frontal lobe that sends commands to muscles.`,job:`Controls voluntary muscle movement. Body parts that need fine control, such as hands and lips, get more cortex.`,damage:`Weakness or paralysis on the opposite side of the body.`,hook:`Motor sits just in front of the central groove. Sensory sits just behind it.`},
+{id:`somato`,name:`Somatosensory cortex`,group:`cortex`,clue:`A strip at the front of the parietal lobe that receives touch information.`,job:`Receives touch, temperature, pain, and body position. More sensitive areas, such as fingertips and lips, get more cortex.`,damage:`Reduced or lost sensation in the matching body part.`,hook:`The sensory strip is right behind the motor strip.`},
+{id:`broca`,name:`Broca's area`,group:`language`,clue:`Left frontal lobe. Damage leaves speech halting and effortful, but comprehension is fine.`,job:`Controls the muscles and planning involved in producing speech. Usually in the left frontal lobe.`,damage:`Broca's aphasia: the person understands speech but speaks slowly, in short phrases, with effort.`,hook:`Broca means broken speech.`},
+{id:`wernicke`,name:`Wernicke's area`,group:`language`,clue:`Left temporal lobe. Damage leaves speech fluent but meaningless, with poor comprehension.`,job:`Language comprehension. Usually in the left temporal lobe.`,damage:`Wernicke's aphasia: fluent speech that makes little sense, and poor understanding of others.`,hook:`Wernicke means word salad.`},
+{id:`thalamus`,name:`Thalamus`,group:`deep`,clue:`The brain's sensory switchboard. Smell is the one sense that skips it.`,job:`A sensory relay station. Directs incoming sensory information (all senses except smell) to the correct area of the cortex.`,damage:`Disrupted sensory processing.`,hook:`Thalamus is the switchboard. Some courses group it with the limbic system.`},
+{id:`hypothalamus`,name:`Hypothalamus`,group:`deep`,clue:`Below the thalamus. Controls hunger, thirst, and body temperature, and directs the pituitary.`,job:`Maintains homeostasis by regulating hunger, thirst, body temperature, and sex drive. Controls the pituitary gland. Contains reward centers (Olds and Milner, rats).`,damage:`Problems with eating, drinking, and temperature control.`,hook:`Hypo means under. Think the four Fs: fighting, fleeing, feeding, and mating.`},
+{id:`amygdala`,name:`Amygdala`,group:`deep`,clue:`Almond-shaped. Processes fear and aggression.`,job:`Processes emotion, especially fear and aggression, and helps store emotional memories.`,damage:`Reduced fear and aggression, and trouble recognizing fear in others.`,hook:`Amygdala is the alarm system.`},
+{id:`hippocampus`,name:`Hippocampus`,group:`deep`,clue:`Seahorse-shaped. Needed to form new conscious memories.`,job:`Forms new explicit (conscious) memories, such as facts and events.`,damage:`Anterograde amnesia: the person cannot form new long-term memories. Patient H.M. is the classic case.`,hook:`Hippocampus: a hippo on campus remembering new things.`},
+{id:`cerebellum`,name:`Cerebellum`,group:`hind`,clue:`The "little brain" at the back. Balance and coordination.`,job:`Coordinates voluntary movement, balance, and fine motor skills. Also involved in learning skills.`,damage:`Clumsy, jerky movement and poor balance. Alcohol impairs it.`,hook:`Cerebellum is little brain, big on balance.`},
+{id:`pons`,name:`Pons`,group:`hind`,clue:`Latin for "bridge." Connects brain regions and helps with sleep and arousal.`,job:`Helps coordinate movement and links the brain with the cerebellum. Plays a role in sleep and arousal.`,damage:`Disrupted sleep and movement coordination.`,hook:`Pons means bridge.`},
+{id:`medulla`,name:`Medulla`,group:`hind`,clue:`Base of the brainstem. Controls heartbeat and breathing.`,job:`Controls automatic survival functions: heartbeat, breathing, blood pressure, and swallowing.`,damage:`Can be fatal because breathing and heartbeat can stop.`,hook:`Medulla manages the must-haves.`},
+{id:`reticular`,name:`Reticular formation`,group:`hind`,clue:`A network inside the brainstem that controls alertness and arousal.`,job:`A network of neurons running through the brainstem. Controls arousal and alertness and filters incoming stimuli.`,damage:`Severe damage can cause a coma.`,hook:`Reticular is the wake-up network.`},
+{id:`callosum`,name:`Corpus callosum`,group:`conn`,clue:`A thick band of axons joining the two hemispheres.`,job:`A band of axons that connects the left and right hemispheres so they can communicate.`,damage:`In split-brain patients (surgery for severe epilepsy) the hemispheres cannot share information. Sperry and Gazzaniga found that each side could act without the other knowing.`,hook:`The callosum is the cable between the two halves.`}
+];
+const regById=id=>REG.find(r=>r.id===id);
+const groupById=id=>GROUPS.find(g=>g.id===id);
+
+/* ---------- tabs ---------- */
+const VIEWS=[`learn`,`brain`,`cards`,`quiz`];
+function show(v,noScroll){
+  VIEWS.forEach(n=>{$(`#v-`+n).hidden=(n!==v);$(`#t-`+n).setAttribute(`aria-selected`,String(n===v))});
+  store.set(`ap2-tab`,v);
+  if(!noScroll)window.scrollTo(0,0);
+}
+$(`.tabs`).addEventListener(`click`,e=>{const b=e.target.closest(`[data-view]`);if(b)show(b.dataset.view)});
+
+/* ---------- learn ---------- */
+function renderLearn(){
+  $(`#topics`).innerHTML=NOTES.map((n,i)=>
+   `<details class="topic"${i===0?` open`:``}><summary><span class="tname">${n.full}</span><span class="tcount">${n.items.length} TERMS</span></summary>
+    <div class="tbody">${n.extra||``}<dl>${n.items.map(it=>`<div class="row"><dt>${it[0]}</dt><dd>${it[1]}</dd></div>`).join(``)}</dl>
+    <p class="trap"><b>Exam trap</b>${n.trap}</p>
+    <div class="btnrow"><button class="btn small" data-go="cards" data-topic="${n.id}">Flashcards</button><button class="btn small" data-go="quiz" data-topic="${n.id}">Quiz on this topic</button>${n.id===`brain`?`<button class="btn small" data-go="brain">Open the brain map</button>`:``}</div></div></details>`).join(``);
+}
+document.addEventListener(`click`,e=>{
+  const b=e.target.closest(`[data-go]`);if(!b)return;
+  const v=b.dataset.go,t=b.dataset.topic;
+  if(v===`cards`&&t){fc.topic=t;$(`#fc-topic`).value=t;buildDeck()}
+  if(v===`quiz`&&t){qz={screen:`start`,topic:t};qRender()}
+  show(v);
+});
+
+/* ---------- brain map ---------- */
+let sel=`frontal`;
+const test={on:false,target:null,tries:0,done:false,msg:``,msgCls:``,ok:0,n:0};
+const svgEl=id=>$(`#brainsvg [data-id="${id}"]`);
+function pick(id){
+  if(!test.on){sel=id;renderBrain();return}
+  if(test.done)return;
+  if(id===test.target){
+    test.done=true;test.n++;if(test.tries===0)test.ok++;
+    test.msg=test.tries===0?`Correct on the first try.`:`Correct.`;test.msgCls=`ok`;sel=id;
+  }else{
+    test.tries++;
+    test.msg=`That is the `+regById(id).name+`. Read the clue again and try another region.`;test.msgCls=`no`;
+    const el=svgEl(id);el.classList.add(`wrong`);setTimeout(()=>el.classList.remove(`wrong`),900);
+  }
+  renderBrain();
+}
+function nextTarget(){
+  const ids=REG.map(r=>r.id).filter(i=>i!==test.target);
+  test.target=ids[Math.floor(Math.random()*ids.length)];
+  test.tries=0;test.done=false;test.msg=``;test.msgCls=``;
+  renderBrain();
+}
+function factsHtml(r){
+  const g=groupById(r.group);
+  return `<span class="pill ${g.cls}">${g.name}</span><h3>${r.name}</h3>
+   <dl class="facts"><dt>What it does</dt><dd>${r.job}</dd><dt>If damaged</dt><dd>${r.damage}</dd><dt>Memory hook</dt><dd>${r.hook}</dd></dl>`;
+}
+function renderBrain(){
+  const showSel=!test.on||test.done;
+  $$(`#brainsvg [data-id]`).forEach(el=>el.classList.toggle(`sel`,showSel&&el.dataset.id===sel));
+  $$(`#chips .chip`).forEach(c=>c.setAttribute(`aria-pressed`,String(showSel&&c.dataset.id===sel)));
+  $(`#figure`).classList.toggle(`testing`,test.on);
+  $(`#chips`).hidden=test.on;
+  const tb=$(`#testbtn`);
+  tb.textContent=test.on?`Back to exploring`:`Test me`;
+  tb.classList.toggle(`primary`,!test.on);
+  tb.setAttribute(`aria-pressed`,String(test.on));
+  $(`#modehint`).textContent=test.on?(test.ok+` of `+test.n+` correct on the first try`):`Exploring`;
+  const p=$(`#panel`);
+  if(!test.on){p.innerHTML=factsHtml(regById(sel));return}
+  const r=regById(test.target);
+  let h=`<p class="eyebrow">Tap the region that matches</p><p class="clue">${r.clue}</p>`;
+  if(test.msg)h+=`<p class="msg ${test.msgCls}">${test.msg}</p>`;
+  if(test.done){
+    h+=`<div style="margin-top:14px">${factsHtml(r)}</div><div class="btnrow"><button class="btn primary" id="nextbtn">Next clue</button></div>`;
+  }else{
+    h+=`<div class="btnrow"><button class="btn small" id="skipbtn">Show me the answer</button></div>`;
+  }
+  p.innerHTML=h;
+  const nb=$(`#nextbtn`);if(nb)nb.focus({preventScroll:true});
+}
+function initBrain(){
+  $$(`#brainsvg [data-id]`).forEach(el=>{
+    const r=regById(el.dataset.id);
+    el.setAttribute(`tabindex`,`0`);el.setAttribute(`role`,`button`);el.setAttribute(`aria-label`,r.name);
+    el.addEventListener(`click`,()=>pick(r.id));
+    el.addEventListener(`keydown`,e=>{if(e.key===`Enter`||e.key===` `){e.preventDefault();pick(r.id)}});
+  });
+  $(`#chips`).innerHTML=GROUPS.map(g=>`<div class="cg ${g.cls}"><p class="cglabel"><i class="dot"></i>${g.name}</p><div class="chiprow">${REG.filter(r=>r.group===g.id).map(r=>`<button class="chip" data-id="${r.id}" aria-pressed="false">${r.name}</button>`).join(``)}</div></div>`).join(``);
+  $(`#chips`).addEventListener(`click`,e=>{const c=e.target.closest(`.chip`);if(c)pick(c.dataset.id)});
+  $(`#testbtn`).addEventListener(`click`,()=>{
+    if(test.on){test.on=false;renderBrain();return}
+    test.on=true;test.ok=0;test.n=0;test.target=null;nextTarget();
+  });
+  $(`#panel`).addEventListener(`click`,e=>{
+    if(e.target.id===`nextbtn`)nextTarget();
+    if(e.target.id===`skipbtn`){test.done=true;test.n++;test.msg=`It was the `+regById(test.target).name+`.`;test.msgCls=``;sel=test.target;renderBrain()}
+  });
+  renderBrain();
+}
+
+/* ---------- flashcards ---------- */
+const known=new Set(store.get(`ap2-known`,[]));
+const fc={topic:`all`,deck:[],flip:false};
+function inSet(i){return fc.topic===`all`||CARDS[i][0]===fc.topic}
+function buildDeck(){
+  const hide=$(`#fc-hide`).checked,sh=$(`#fc-shuffle`).checked;
+  let ids=CARDS.map((c,i)=>i).filter(i=>inSet(i)&&(!hide||!known.has(i)));
+  fc.deck=sh?shuffle(ids):ids;fc.flip=false;renderCard();
+}
+function topicNameOf(id){return NOTES.find(n=>n.id===id).name}
+function renderCard(){
+  const root=$(`#fc-root`);
+  const total=CARDS.map((c,i)=>i).filter(inSet);
+  const kn=total.filter(i=>known.has(i)).length;
+  const pct=total.length?Math.round(kn/total.length*100):0;
+  const prog=`<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div><p class="small">${kn} of ${total.length} cards known in this set</p>`;
+  if(!fc.deck.length){
+    root.innerHTML=`<div class="empty"><h3>${total.length&&kn===total.length?`You know every card in this set`:`No cards left in this round`}</h3><p class="small">Reset your progress to start over, or choose another topic.</p><div class="btnrow"><button class="btn primary" id="fc-reset">Reset this set</button><button class="btn" id="fc-all">Show all cards</button></div></div>`+prog;
+    return;
+  }
+  const c=CARDS[fc.deck[0]];
+  const front=!fc.flip;
+  root.innerHTML=`<button class="card${front?``:` back`}" id="card" aria-label="${front?`Show the answer`:`Show the question`}">
+    <span class="cardtag">${front?`Question`:`Answer`} · ${topicNameOf(c[0])}</span>
+    <span class="cardtext">${front?c[1]:c[2]}</span>
+    <span class="cardhint">${front?`Tap to flip`:c[1]}</span></button>
+    <div class="btnrow">${front?`<button class="btn primary" id="fc-flip">Show answer</button>`:`<button class="btn" id="fc-again">Still learning</button><button class="btn good" id="fc-got">Got it</button>`}</div>
+    <p class="small" style="margin-top:12px">${fc.deck.length} left in this round</p>`+prog;
+}
+function initCards(){
+  const sel=$(`#fc-topic`);
+  sel.innerHTML=`<option value="all">All topics (${CARDS.length})</option>`+NOTES.map(n=>`<option value="${n.id}">${n.name} (${CARDS.filter(c=>c[0]===n.id).length})</option>`).join(``);
+  sel.addEventListener(`change`,()=>{fc.topic=sel.value;buildDeck()});
+  $(`#fc-hide`).addEventListener(`change`,buildDeck);
+  $(`#fc-shuffle`).addEventListener(`change`,buildDeck);
+  $(`#fc-root`).addEventListener(`click`,e=>{
+    const id=e.target.closest(`button`)?e.target.closest(`button`).id:``;
+    if(id===`card`||id===`fc-flip`){fc.flip=!fc.flip;renderCard();const c=$(`#card`);if(c)c.focus({preventScroll:true})}
+    else if(id===`fc-got`){known.add(fc.deck.shift());store.set(`ap2-known`,Array.from(known));fc.flip=false;renderCard()}
+    else if(id===`fc-again`){fc.deck.push(fc.deck.shift());fc.flip=false;renderCard()}
+    else if(id===`fc-reset`){CARDS.forEach((c,i)=>{if(inSet(i))known.delete(i)});store.set(`ap2-known`,Array.from(known));buildDeck()}
+    else if(id===`fc-all`){$(`#fc-hide`).checked=false;buildDeck()}
+  });
+  buildDeck();
+}
+
+/* ---------- quiz ---------- */
+const best=store.get(`ap2-best`,{});
+let qz={screen:`start`,topic:`all`};
+function topicQs(t){return Q.map((q,i)=>i).filter(i=>t===`all`||Q[i][0]===t)}
+function beginQuiz(pool,topic,retry){
+  qz={screen:`q`,topic:topic,list:pool,i:0,score:0,missed:[],picked:-1,retry:!!retry};
+  prepOpts();qRender();
+}
+function prepOpts(){
+  const q=Q[qz.list[qz.i]];
+  qz.opts=shuffle([{t:q[2],ok:true}].concat(q[3].map(w=>({t:w,ok:false}))));
+  qz.picked=-1;
+}
+function qRender(){
+  const root=$(`#quiz-root`);
+  if(qz.screen===`start`){
+    const chips=[`all`].concat(NOTES.map(n=>n.id)).map(id=>{
+      const name=id===`all`?`All topics`:topicName(id);
+      const n=topicQs(id).length;const per=id===`all`?Math.min(12,n):n;
+      const b=best[id];
+      return `<button class="tchip" data-topic="${id}" aria-pressed="${qz.topic===id}">${name}<small>${per} questions${b!==undefined?` · best ${b}%`:``}</small></button>`;
+    }).join(``);
+    root.innerHTML=`<p class="lede">Pick a topic, then answer one question at a time. You see the explanation after each answer. All topics gives a random mix of 12.</p><div class="tchips" id="qchips">${chips}</div><div class="btnrow"><button class="btn primary" id="qstart">Start quiz</button></div>`;
+    return;
+  }
+  if(qz.screen===`q`){
+    const qi=qz.list[qz.i],q=Q[qi],total=qz.list.length;
+    const answered=qz.picked>=0;
+    root.innerHTML=`<p class="eyebrow">Question ${qz.i+1} of ${total} · ${topicName(q[0])}</p>
+     <div class="bar"><i style="width:${Math.round(qz.i/total*100)}%"></i></div>
+     <p class="qtext">${q[1]}</p>
+     <div class="opts">${qz.opts.map((o,k)=>{
+        let cls=``,mark=``;
+        if(answered){if(o.ok){cls=` correct`;mark=`<span class="mark">Correct answer</span>`}else if(k===qz.picked){cls=` wrong`;mark=`<span class="mark">Your answer</span>`}}
+        return `<button class="opt${cls}" data-k="${k}"${answered?` disabled`:``}>${mark}<span>${o.t}</span></button>`}).join(``)}</div>
+     ${answered?`<div class="why"><b>${qz.opts[qz.picked].ok?`Right.`:`Not quite.`}</b> ${q[4]}</div><div class="btnrow"><button class="btn primary" id="qnext">${qz.i+1<total?`Next question`:`See results`}</button></div>`:``}`;
+    const nb=$(`#qnext`);if(nb)nb.focus({preventScroll:true});
+    return;
+  }
+  const total=qz.list.length,pct=Math.round(qz.score/total*100);
+  root.innerHTML=`<p class="eyebrow">Results · ${qz.topic===`all`?`All topics`:topicName(qz.topic)}</p>
+   <p class="score">${qz.score} / ${total}</p><p>${pct}% correct.${qz.missed.length?` Review what you missed below, then retry just those questions.`:` Nothing missed in this round.`}</p>
+   ${qz.missed.map(i=>`<div class="miss"><p><b>${Q[i][1]}</b></p><p>Answer: ${Q[i][2]}</p><p class="small">${Q[i][4]}</p></div>`).join(``)}
+   <div class="btnrow">${qz.missed.length?`<button class="btn primary" id="qretry">Retry missed (${qz.missed.length})</button>`:``}<button class="btn${qz.missed.length?``:` primary`}" id="qnew">New round</button></div>`;
+}
+function topicName(id){const n=NOTES.find(x=>x.id===id);return n?n.name:id}
+function initQuiz(){
+  $(`#quiz-root`).addEventListener(`click`,e=>{
+    const chip=e.target.closest(`.tchip`);
+    if(chip){qz.topic=chip.dataset.topic;qRender();return}
+    const opt=e.target.closest(`.opt`);
+    if(opt&&qz.screen===`q`&&qz.picked<0){
+      qz.picked=Number(opt.dataset.k);
+      if(qz.opts[qz.picked].ok)qz.score++;else qz.missed.push(qz.list[qz.i]);
+      qRender();return;
+    }
+    const id=e.target.closest(`button`)?e.target.closest(`button`).id:``;
+    if(id===`qstart`){
+      let pool=shuffle(topicQs(qz.topic));
+      if(qz.topic===`all`)pool=pool.slice(0,12);
+      beginQuiz(pool,qz.topic,false);
+    }else if(id===`qnext`){
+      if(qz.i+1<qz.list.length){qz.i++;prepOpts();qRender()}
+      else{
+        qz.screen=`done`;
+        if(!qz.retry){const pct=Math.round(qz.score/qz.list.length*100);if(!(best[qz.topic]>=pct)){best[qz.topic]=pct;store.set(`ap2-best`,best)}}
+        qRender();
+      }
+    }else if(id===`qretry`){beginQuiz(shuffle(qz.missed),qz.topic,true)}
+    else if(id===`qnew`){qz={screen:`start`,topic:qz.topic};qRender()}
+  });
+  qRender();
+}
+
+/* ---------- boot ---------- */
+renderLearn();initBrain();initCards();initQuiz();
+const saved=store.get(`ap2-tab`,`learn`);
+show(VIEWS.indexOf(saved)>=0?saved:`learn`,true);
+})();
+</script>
+
+</body>
+</html>
